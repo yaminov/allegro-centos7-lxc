@@ -21,31 +21,24 @@ lxc.arch = x86_64
 lxc.uts.name = centos7
 
 lxc.mount.entry = /opt mnt/host none bind,create=dir 0 0
-lxc.mount.entry = /mnt/nvme/pro opt/pro none bind,create=dir 0 0
-
 lxc.mount.entry = /tmp/.X11-unix tmp/.X11-unix none bind,optional,create=dir,ro
 
-#lxc.cgroup.devices.allow = c 195:* rwm
+lxc.cgroup.devices.allow = a
+
+# pass only /dev/dri (i.e. intel card)
 lxc.cgroup.devices.allow = c 226:* rwm
-#lxc.cgroup.devices.allow = c 234:* rwm
 lxc.mount.entry = /dev/dri dev/dri none bind,optional,create=dir
+
+# uncomment if pass nvidia card
+#lxc.cgroup.devices.allow = c 195:* rwm
+#lxc.cgroup.devices.allow = c 234:* rwm
 #lxc.mount.entry = /dev/nvidia0 dev/nvidia0 none bind,create=file
 #lxc.mount.entry = /dev/nvidiactl dev/nvidiactl none bind,create=file
 #lxc.mount.entry = /dev/nvidia-modeset dev/nvidia-modeset none bind,create=file
 #lxc.mount.entry = /dev/nvidia-uvm dev/nvidia-uvm none bind,create=file
 
 # When using LXC with apparmor, uncomment the next line to run unconfined:
-#lxc.apparmor.profile = unconfined
+lxc.apparmor.profile = unconfined
 
-# example simple networking setup, uncomment to enable
-#lxc.net.0.type = veth
-#lxc.net.0.flags = up
-#lxc.net.0.link = lxcbr0
-#lxc.net.0.name = eth0
-# Additional example for veth network type
-#    static MAC address,
-#lxc.net.0.hwaddr = 00:16:3e:77:52:20
-#    persistent veth device name on host side
-#        Note: This may potentially collide with other containers of same name!
-#lxc.net.0.veth.pair = v-centos7-e0
-
+# Allow all capabilities
+lxc.cap.drop =
