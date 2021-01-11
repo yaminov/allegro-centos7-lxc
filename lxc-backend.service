@@ -1,0 +1,21 @@
+[Unit]
+Description=LVM backend for LXC storage
+
+DefaultDependencies=no
+
+Conflicts=umount.target
+
+Requires=opt.mount
+Before=local-fs.target umount.target
+After=opt.mount
+
+[Service]
+ExecStart=/sbin/losetup /dev/loop11 /opt/images/lxc.img
+ExecStop=/sbin/vgchange -an lxc
+ExecStop=/sbin/losetup -d /dev/loop11
+
+RemainAfterExit=true
+Type=oneshot
+
+[Install]
+WantedBy=local-fs-pre.target
