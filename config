@@ -1,35 +1,36 @@
-# Template used to create this container: /usr/share/lxc/templates/lxc-centos
-# Parameters passed to the template: -R 7 -a x86_64
-# Template script checksum (SHA-1): 635ef0c31b78ca26fbdbbf92120effd3d7b8d8b1
+# Template used to create this container: /usr/share/lxc/templates/lxc-download
+# Parameters passed to the template: -d centos -r 7 -a amd64
 # For additional config options, please look at lxc.container.conf(5)
 
 # Uncomment the following line to support nesting containers:
 #lxc.include = /usr/share/lxc/config/nesting.conf
 # (Be aware this has security implications)
 
-#lxc.net.0.type = empty
-lxc.net.0.type = veth
-lxc.net.0.link = lxcbr0
-lxc.net.0.hwaddr = fe:b4:34:d8:22:ea
-lxc.net.0.flags = up
-lxc.rootfs.path = lvm:/dev/lxc/centos7
-
-# Include common configuration
-lxc.include = /usr/share/lxc/config/centos.common.conf
-
+# Distribution configuration
+lxc.include = /usr/share/lxc/config/common.conf
 lxc.arch = x86_64
+
+# Container specific configuration
+lxc.rootfs.path = lvm:/dev/lxc/centos7
 lxc.uts.name = centos7
 
-lxc.mount.entry = /opt mnt/host none bind,create=dir 0 0
-lxc.mount.entry = /tmp/.X11-unix tmp/.X11-unix none bind,optional,create=dir,ro
+# disable apparmor restrictions and enable capabilities
+lxc.apparmor.profile = unconfined
+lxc.cap.drop = 
 
+# allow node creation
 lxc.cgroup.devices.allow = a
 
-# pass only /dev/dri (i.e. intel card)
+# pass directories
+lxc.mount.entry = /opt mnt/opt none bind,create=dir 0 0
+
+# pass video
+lxc.mount.entry = /tmp/.X11-unix tmp/.X11-unix none bind,optional,create=dir,ro
+
 lxc.cgroup.devices.allow = c 226:* rwm
 lxc.mount.entry = /dev/dri dev/dri none bind,optional,create=dir
 
-# uncomment if pass nvidia card
+# nvidia 
 #lxc.cgroup.devices.allow = c 195:* rwm
 #lxc.cgroup.devices.allow = c 234:* rwm
 #lxc.mount.entry = /dev/nvidia0 dev/nvidia0 none bind,create=file
@@ -37,8 +38,9 @@ lxc.mount.entry = /dev/dri dev/dri none bind,optional,create=dir
 #lxc.mount.entry = /dev/nvidia-modeset dev/nvidia-modeset none bind,create=file
 #lxc.mount.entry = /dev/nvidia-uvm dev/nvidia-uvm none bind,create=file
 
-# When using LXC with apparmor, uncomment the next line to run unconfined:
-lxc.apparmor.profile = unconfined
-
-# Allow all capabilities
-lxc.cap.drop =
+# Network configuration
+#lxc.net.0.type = empty
+lxc.net.0.type = veth
+lxc.net.0.link = lxcbr0
+lxc.net.0.flags = up
+lxc.net.0.hwaddr = 00:16:3e:c2:00:08
